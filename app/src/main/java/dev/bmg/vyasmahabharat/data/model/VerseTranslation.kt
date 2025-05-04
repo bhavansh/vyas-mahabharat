@@ -1,5 +1,8 @@
 package dev.bmg.vyasmahabharat.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class VerseTranslation(
-    val debroy_trans: String
+    @SerializedName("debroy_trans")
+    val debroyTrans: String
 )

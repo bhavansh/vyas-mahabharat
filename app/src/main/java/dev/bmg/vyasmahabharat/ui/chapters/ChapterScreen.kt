@@ -23,7 +23,7 @@ fun ChapterScreen(viewModel: MahabharataViewModel, onChapterSelected: (Int) -> U
     Column(modifier = Modifier.fillMaxSize()) {
         selectedBook?.let { book ->
             Text(
-                text = book.book_name,
+                text = book.bookName,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(16.dp)
             )
@@ -31,9 +31,9 @@ fun ChapterScreen(viewModel: MahabharataViewModel, onChapterSelected: (Int) -> U
             LazyColumn(contentPadding = PaddingValues(8.dp)) {
                 items(book.chapters) { chapter ->
                     ChapterItem(
-                        chapterName = chapter.chapter_name,
-                        chapterId = chapter.chapter_id,
-                        onChapterSelected = { onChapterSelected(chapter.chapter_id) }
+                        chapterName = chapter.chapterName,
+                        chapterId = chapter.chapterId,
+                        onChapterSelected = { onChapterSelected(chapter.chapterId) }
                     )
                 }
             }

@@ -1,7 +1,11 @@
 package dev.bmg.vyasmahabharat.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Chapter(
-    val chapter_id: Int,
-    val chapter_name: String,
+    @SerializedName("chapter_id")
+    val chapterId: Int,
+    @SerializedName("chapter_name")
+    val chapterName: String,
     val verses: List<Verse>
 )

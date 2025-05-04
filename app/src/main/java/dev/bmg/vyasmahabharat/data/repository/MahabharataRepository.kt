@@ -24,7 +24,7 @@ class MahabharataRepository(private val context: Context) {
                 booksList.add(book)
             }
             
-            this.booksList = booksList.sortedBy { it.book_number }
+            this.booksList = booksList.sortedBy { it.bookNumber }
         } catch (e: Exception) {
             Log.e("MahabharataRepository", "Error loading books: ${e.message}")
         }
@@ -33,7 +33,7 @@ class MahabharataRepository(private val context: Context) {
     fun getAllBooks(): List<MahabharataBook> = booksList
     
     fun getBookByNumber(bookNumber: Int): MahabharataBook? {
-        return booksList.find { it.book_number == bookNumber }
+        return booksList.find { it.bookNumber == bookNumber }
     }
     
     fun getChaptersByBookNumber(bookNumber: Int): List<Chapter>? {
@@ -41,6 +41,6 @@ class MahabharataRepository(private val context: Context) {
     }
     
     fun getChapter(bookNumber: Int, chapterId: Int): Chapter? {
-        return getBookByNumber(bookNumber)?.chapters?.find { it.chapter_id == chapterId }
+        return getBookByNumber(bookNumber)?.chapters?.find { it.chapterId == chapterId }
     }
 }

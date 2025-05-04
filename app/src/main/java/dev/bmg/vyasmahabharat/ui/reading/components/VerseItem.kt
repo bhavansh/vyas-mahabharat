@@ -45,7 +45,7 @@ fun VerseItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Verse ${verse.verse_number}",
+                text = "Verse ${verse.verseNumber}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -54,7 +54,7 @@ fun VerseItem(
             
             // Sanskrit Text
             Text(
-                text = verse.verse_data.joinToString("\n"),
+                text = verse.verseData.joinToString("\n"),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily.Serif
             )
@@ -63,7 +63,7 @@ fun VerseItem(
             
             // English Translation
             Text(
-                text = verse.verse_translation.debroy_trans,
+                text = verse.verseTranslation.debroyTrans,
                 style = MaterialTheme.typography.bodyMedium
             )
             

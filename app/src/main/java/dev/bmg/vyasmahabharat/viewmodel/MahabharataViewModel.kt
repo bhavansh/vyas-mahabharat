@@ -36,6 +36,6 @@ class MahabharataViewModel(private val repository: MahabharataRepository) : View
     }
     
     fun selectChapter(chapterId: Int) {
-        _selectedChapter.value = _selectedBook.value?.chapters?.find { it.chapter_id == chapterId }
+        _selectedChapter.value = _selectedBook.value?.chapters?.find { it.chapterId == chapterId }
     }
 }

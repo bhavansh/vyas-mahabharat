@@ -1,8 +1,13 @@
 package dev.bmg.vyasmahabharat.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class MahabharataBook(
-    val book_name: String,
-    val book_number: Int,
-    val num_chapters: Int,
+    @SerializedName("book_name")
+    val bookName: String,
+    @SerializedName("book_number")
+    val bookNumber: Int,
+    @SerializedName("num_chapters")
+    val numChapters: Int,
     val chapters: List<Chapter>
 )

@@ -39,7 +39,7 @@ fun ChapterReadingScreen(
         // Chapter title
         selectedChapter?.let { chapter ->
             Text(
-                text = chapter.chapter_name,
+                text = chapter.chapterName,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(16.dp)
             )
@@ -87,8 +87,8 @@ fun ChapterReadingScreen(
                         onVerseSelected = { selectedVerse.value = verse },
                         onTextToSpeech = {
                             val textToSpeak = when (languageSelection.value) {
-                                TextToSpeechLanguage.ENGLISH -> verse.verse_translation.debroy_trans
-                                TextToSpeechLanguage.SANSKRIT -> verse.verse_data.joinToString("\n")
+                                TextToSpeechLanguage.ENGLISH -> verse.verseTranslation.debroyTrans
+                                TextToSpeechLanguage.SANSKRIT -> verse.verseData.joinToString("\n")
                             }
                             textToSpeech.speak(textToSpeak, languageSelection.value)
                         }

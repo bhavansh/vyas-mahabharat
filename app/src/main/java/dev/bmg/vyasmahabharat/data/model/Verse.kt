@@ -1,8 +1,14 @@
 package dev.bmg.vyasmahabharat.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Verse(
-    val verse_id: Int,
-    val verse_number: String,
-    val verse_data: List<String>,
-    val verse_translation: VerseTranslation
+    @SerializedName("verse_id")
+    val verseId: Int,
+    @SerializedName("verse_number")
+    val verseNumber: String,
+    @SerializedName("verse_data")
+    val verseData: List<String>,
+    @SerializedName("verse_translation")
+    val verseTranslation: VerseTranslation
 )

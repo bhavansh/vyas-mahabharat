@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# Keep rules for Gson data models in the correct package
+# Make sure this path matches ALL your data model classes used by Gson
+-keep class dev.bmg.vyasmahabharat.data.model.** { *; }
+-keepclassmembers class dev.bmg.vyasmahabharat.data.model.** { *; }
+
+# --- Add these recommended rules too for robustness ---
+
+# Keep default constructors for classes used with Gson (often needed)
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+  <init>(); # Keep default constructor
+}
+
+# Keep specific Gson annotations if you use them directly
+# -keep @com.google.gson.annotations.SerializedName class *
+
+# General rule for libraries using reflection
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes InnerClasses
+
+# Add rules for other libraries if needed (e.g., Compose, Navigation usually handled by defaults or library artifacts)

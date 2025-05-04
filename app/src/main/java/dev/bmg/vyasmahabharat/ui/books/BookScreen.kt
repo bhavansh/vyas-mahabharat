@@ -21,9 +21,9 @@ fun BookScreen(viewModel: MahabharataViewModel, onBookSelected: (Int) -> Unit) {
     ) {
         items(books) { book ->
             BookCard(
-                bookName = book.book_name,
-                bookNumber = book.book_number,
-                onBookSelected = { onBookSelected(book.book_number) }
+                bookName = book.bookName,
+                bookNumber = book.bookNumber,
+                onBookSelected = { onBookSelected(book.bookNumber) }
             )
         }
     }
