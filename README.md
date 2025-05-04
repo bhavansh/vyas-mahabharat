@@ -56,5 +56,5 @@ This app is provided for **educational use only**. All rights to the original co
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="images/2.png" alt="App Home Screen" width="441" />
   <img src="images/3.png" alt="Chapter View" width="441" />
-  <img src="images/3.png" alt="Dark Mode" width="441" />
+  <img src="images/4.png" alt="Dark Mode" width="441" />
 </div>
