@@ -1,0 +1,90 @@
+name: Android Release Build
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger workflow only on pushes to tags starting with 'v' (e.g., v1.0, v2.1.3)
+
+jobs:
+  build:
+    name: Build Release APK
+    runs-on: ubuntu-latest # Use a Linux runner
+
+    permissions:
+      contents: write # Needed to create GitHub releases
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Match your project's required Java version
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Decode Keystore
+        id: decode_keystore
+        # Create a temporary file path for the keystore
+        run: |
+          echo "storeFile=$(pwd)/release.jks" >> $GITHUB_ENV
+          echo "${{ secrets.SIGNING_STORE_BASE64 }}" | base64 --decode > $(pwd)/release.jks
+        env:
+          SIGNING_STORE_BASE64: ${{ secrets.SIGNING_STORE_BASE64 }}
+
+      - name: Build Release APK
+        # Pass secrets as environment variables matching those in build.gradle.kts
+        run: ./gradlew assembleRelease
+        env:
+          SIGNING_STORE_FILE: ${{ env.storeFile }} # Use the path generated in the previous step
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+      # Optional: Build Release AAB as well (uncomment if needed)
+      # - name: Build Release AAB
+      #   run: ./gradlew bundleRelease
+      #   env:
+      #     SIGNING_STORE_FILE: ${{ env.storeFile }}
+      #     SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+      #     SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+      #     SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+      - name: Find APK artifact name
+        id: find_apk
+        # Find the specific APK name (handles versioning in name if you add it)
+        run: |
+          APK_NAME=$(find app/build/outputs/apk/release -name '*.apk' | head -n 1)
+          echo "apk_path=${APK_NAME}" >> $GITHUB_OUTPUT
+          echo "apk_filename=$(basename ${APK_NAME})" >> $GITHUB_OUTPUT
+
+      # Optional: Find AAB artifact name (uncomment if building AAB)
+      # - name: Find AAB artifact name
+      #   id: find_aab
+      #   run: |
+      #     AAB_NAME=$(find app/build/outputs/bundle/release -name '*.aab' | head -n 1)
+      #     echo "aab_path=${AAB_NAME}" >> $GITHUB_OUTPUT
+      #     echo "aab_filename=$(basename ${AAB_NAME})" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2 # A popular action for creating releases
+        # if: startsWith(github.ref, 'refs/tags/') # Redundant check as 'on:' handles this
+        with:
+          tag_name: ${{ github.ref_name }} # Use the tag that triggered the workflow
+          name: Release ${{ github.ref_name }} # Release title (e.g., Release v1.0)
+          # body: | # Optional: Add release notes here or leave blank
+          #   Automated release for tag ${{ github.ref_name }}
+          #   - Bug fixes
+          #   - New features
+          draft: false # Set to true to create a draft release you can review first
+          prerelease: false # Set to true if this is a pre-release
+          files: |
+            ${{ steps.find_apk.outputs.apk_path }} # Upload the APK
+            # ${{ steps.find_aab.outputs.aab_path }} # Uncomment to upload AAB
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Provided automatically by GitHub
