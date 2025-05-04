@@ -1,8 +1,23 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+fun loadKeystoreProperties(projectRootDir: File): Properties? {
+    val propertiesFile = File(projectRootDir, "keystore.properties")
+    return if (propertiesFile.isFile) {
+        Properties().apply {
+            FileInputStream(propertiesFile).use { fis -> load(fis) }
+        }
+    } else {
+        null // Return null if file doesn't exist (important for CI)
+    }
+}
+
 
 android {
     namespace = "dev.bmg.vyasmahabharat"
@@ -18,9 +33,42 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val keystoreProperties = loadKeystoreProperties(rootProject.rootDir)
+
+    signingConfigs {
+        create("release") {
+            if (keystoreProperties != null) {
+                // Read from properties file if it exists
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            } else {
+                // Read from environment variables (for CI/GitHub Actions)
+                // We'll set these env vars in the GitHub Actions workflow
+                storeFile = System.getenv("SIGNING_STORE_FILE")?.let { file(it) }
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
+    }
+
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true // Recommended for release
+            isShrinkResources = true // Recommended for release
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            // Apply the signing configuration to the release build type
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isMinifyEnabled = false // Recommended for release
+            isShrinkResources = false // Recommended for release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
