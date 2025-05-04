@@ -33,22 +33,32 @@ android {
     }
 
     val keystoreProperties = loadKeystoreProperties(rootProject.rootDir)
+    val hasKeystoreFile = keystoreProperties != null || System.getenv("SIGNING_STORE_FILE") != null
 
     signingConfigs {
-        create("release") {
-            if (keystoreProperties != null) {
-                // Read from properties file if it exists
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-            } else {
-                // Read from environment variables (for CI/GitHub Actions)
-                // We'll set these env vars in the GitHub Actions workflow
-                storeFile = System.getenv("SIGNING_STORE_FILE")?.let { file(it) }
-                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+        if (hasKeystoreFile) {
+            create("release") {
+                if (keystoreProperties != null) {
+                    // Read from properties file if it exists
+                    storeFile = file(keystoreProperties["storeFile"] as String)
+                    storePassword = keystoreProperties["storePassword"] as String
+                    keyAlias = keystoreProperties["keyAlias"] as String
+                    keyPassword = keystoreProperties["keyPassword"] as String
+                } else {
+                    // Read from environment variables (for CI/GitHub Actions)
+                    val keystoreFilePath = System.getenv("SIGNING_STORE_FILE")
+                    if (keystoreFilePath != null) {
+                        storeFile = file(keystoreFilePath)
+                        storePassword = System.getenv("SIGNING_STORE_PASSWORD") ?: ""
+                        keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: ""
+                        keyPassword = System.getenv("SIGNING_KEY_PASSWORD") ?: ""
+                    }
+                }
+            }
+        } else {
+            // Create a debug signing configuration as fallback
+            create("debug") {
+                // No specific configuration needed for debug
             }
         }
     }
@@ -137,4 +147,5 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.ui.tooling)
 }

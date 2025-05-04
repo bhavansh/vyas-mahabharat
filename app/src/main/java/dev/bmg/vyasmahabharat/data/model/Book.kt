@@ -2,7 +2,7 @@ package dev.bmg.vyasmahabharat.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class MahabharataBook(
+data class Book(
     @SerializedName("book_name")
     val bookName: String,
     @SerializedName("book_number")
