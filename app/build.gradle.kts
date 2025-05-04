@@ -28,7 +28,7 @@ android {
         minSdk = 28
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = project.findProperty("versionNameFromTag")?.toString() ?: "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,6 +65,7 @@ android {
             )
             // Apply the signing configuration to the release build type
             signingConfig = signingConfigs.getByName("release")
+
         }
         debug {
             isMinifyEnabled = false // Recommended for release
@@ -75,6 +76,22 @@ android {
             )
         }
     }
+
+    applicationVariants.all {
+        val variant = this
+        if (variant.buildType.name == "release") {
+            variant.outputs.all {
+                // Cast to ApkVariantOutputImpl for newer AGP versions
+                (this as com.android.build.gradle.internal.api.ApkVariantOutputImpl).apply {
+                    val projectBaseName = "vyas-mahabharat"
+                    val versionName = variant.versionName
+                    outputFileName = "${projectBaseName}-v${versionName}.apk"
+                    println("Set output file name to: $outputFileName")
+                }
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -90,6 +107,11 @@ android {
             assets {
                 srcDirs("src/main/assets")
             }
+        }
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
