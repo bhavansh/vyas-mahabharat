@@ -50,3 +50,11 @@ This app is **unofficial** and not affiliated with @termite_colony. The translat
 ## 📜 License
 
 This app is provided for **educational use only**. All rights to the original content and translations belong to their respective creators. Please support their work.
+
+## Sample Images
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="images/2.png" alt="App Home Screen" width="441" />
+  <img src="images/3.png" alt="Chapter View" width="441" />
+  <img src="images/3.png" alt="Dark Mode" width="441" />
+</div>
